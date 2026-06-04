@@ -1,10 +1,11 @@
-from fetch_data import aapl_data
+from fetch_data import get_stock_data
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import accuracy_score
 
+aapl_data = get_stock_data("AAPL")
 aapl_data["Target"] = np.where(aapl_data["Close"].shift(-12) > aapl_data["Close"], 1, 0)
 aapl_data.dropna(axis = 0, inplace=True)
 
