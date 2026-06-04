@@ -1,11 +1,7 @@
 import streamlit as st
 from fetch_data import get_stock_data
-import matplotlib.pyplot as plt
-import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import accuracy_score
+from visualize import get_figure
+from model import run_model
 
 st.title("Stock Analysis Tool")
 ticker = st.text_input("Enter a stock ticker: ")
@@ -14,28 +10,15 @@ if ticker != "":
     df = get_stock_data(ticker)
     if df is not None:
         st.success("Ticker Data Successfully Loaded")
-        fig, ax = plt.subplots()
-        ax.plot(df["Close"], label="Close")
-        ax.plot(df["MA_10"], label="MA_10")
-        ax.plot(df["MA_30"], label="MA_30")
-        ax.set_title(ticker + " Price + Moving Averages")
-        ax.legend()
-        st.pyplot(fig)
+        st.pyplot(get_figure(df, ticker))
 
-        df["Target"] = np.where(df["Close"].shift(-12) > df["Close"], 1, 0)
-        X = df[["MA_10", "MA_30", "Daily_Return", "Volatility", "RSI"]]
-        y = df["Target"]
+        model_results = run_model(df)
+        
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
-        rfc = RandomForestClassifier()
-        rfc.fit(X_train, y_train)
-        y_pred = rfc.predict(X_test)
-        scores = cross_val_score(rfc, X_train, y_train, cv = 3)
-        st.write("Test Accuracy:", accuracy_score(y_test, y_pred))
-        st.write("Cross Val Scores:", scores)
-        st.write("Mean Cross Val:", scores.mean())
-        latest = df[["MA_10", "MA_30", "Daily_Return", "Volatility", "RSI"]].dropna().iloc[[-1]]
-        prediction = rfc.predict(latest)[0]
+        st.write("Test Accuracy:", model_results["Test Accuracy"])
+        st.write("Cross Val Scores:", model_results["Cross Validation Scores"])
+        st.write("Mean Cross Val:", model_results["Mean Cross Validation Score"])
+        prediction = model_results["Prediction"]
         if prediction == 1:
             st.success("Model predicts: UP in 12 days")
         else:
