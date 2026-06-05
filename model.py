@@ -22,8 +22,8 @@ def run_model(df):
     latest = X.dropna().iloc[[-1]]
     prediction = rfc.predict(latest)[0]
 
-    scores = {'Test Accuracy': [accuracy_score(y_test, y_pred)],
-              'Cross Validation Scores': [crossval],
-              'Mean Cross Validation Score': [crossval.mean()],
-              'Prediction': [prediction]}
+    scores = {'Test Accuracy': accuracy_score(y_test, y_pred),
+              'Cross Validation Scores': crossval,
+              'Mean Cross Validation Score': crossval.mean(),
+              'Prediction': prediction}
     return scores
