@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 
+
 def run_backtest(df):
     df["Target"] = np.where(df["Close"].shift(-12) > df["Close"], 1, 0)
     df.dropna(axis = 0, inplace=True)

@@ -3,4 +3,8 @@ pandas
 numpy
 scikit-learn
 matplotlib
+<<<<<<< HEAD
 streamlit
+=======
+streamlit
+>>>>>>> 17aefa7882a289a390a4da38d28465b5cafafa8e
