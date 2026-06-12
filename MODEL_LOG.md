@@ -36,3 +36,15 @@ Notes: Significantly worse. Model's DOWN predictions not reliable enough to shor
 - Notes: First version to beat buy and hold on multiple tickers. 
   Works best on volatile stocks with clear mean reversion behavior 
   (TSLA). Struggles on extreme downtrends (INTC).
+
+**Version 2.1 — Stock Universe Screener**
+- Feature: Runs mean reversion strategy across a predefined 25-stock universe
+- Universe: Tech, Finance, Consumer, Healthcare, Energy, ETFs
+- Key metric: Alpha % (Strategy Return - Buy and Hold Return)
+- Results: 
+  - Positive strategy returns across all 25 stocks (0 negative)
+  - Beats buy and hold on 11/25 stocks (44% win rate)
+  - Best alpha: META, NVDA, AMZN, MA
+  - Weakest: GOOGL, GS, INTC (strong bull runs, momentum beats mean reversion)
+- Notes: Strategy works best on volatile stocks with mean-reverting behavior. 
+  Pure momentum stocks are hard to beat with this approach.
