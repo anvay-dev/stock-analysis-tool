@@ -26,7 +26,8 @@ def run_reversion(df):
         elif row["signal"] == -1:
             balance = balance * (1 - row["Daily_Return"])
         portfolio_values.append(balance)
-
+    print(type(df["Close"].iloc[-1]))
+    print(df["Close"].iloc[-1])
     last_close = df["Close"].iloc[-1]
     first_close = df["Close"].iloc[0]
     buyhold = (last_close - first_close) / first_close * 100
@@ -35,5 +36,6 @@ def run_reversion(df):
     return {
         'Net Asset Values': portfolio_values, 
         'Final Strategy Return': strategy_return, 
-        'Buy and Hold Return': buyhold
+        'Buy and Hold Return': buyhold,
+        'Data': df
     }
