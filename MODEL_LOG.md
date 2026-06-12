@@ -24,3 +24,15 @@ Version 1.3 — Shorting on DOWN days
 Change: When prediction == 0, apply inverse of daily return
 Results: AAPL -38%, META -42%, NVDA -149%, TSLA -129%, INTC -287%
 Notes: Significantly worse. Model's DOWN predictions not reliable enough to short profitably. Shorting amplifies losses when wrong.
+
+**Version 2.0 — Mean Reversion with Bollinger Band Crossover**
+- Strategy: Buy when price crosses back above lower band, short when 
+  price crosses back below upper band
+- Bands: 20-day moving average ± 2 standard deviations
+- Key fix: Crossover signals instead of threshold signals — buy on 
+  recovery not on continued decline
+- Results: AAPL +1.97%, KO +0.57%, TSLA +36.57% vs buy and hold
+  NVDA -1.24%, SPY -3.53%, INTC -55.92%
+- Notes: First version to beat buy and hold on multiple tickers. 
+  Works best on volatile stocks with clear mean reversion behavior 
+  (TSLA). Struggles on extreme downtrends (INTC).
