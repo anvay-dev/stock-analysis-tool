@@ -48,3 +48,14 @@ Notes: Significantly worse. Model's DOWN predictions not reliable enough to shor
   - Weakest: GOOGL, GS, INTC (strong bull runs, momentum beats mean reversion)
 - Notes: Strategy works best on volatile stocks with mean-reverting behavior. 
   Pure momentum stocks are hard to beat with this approach.
+
+**Version 3.0 — Quantitative Portfolio Construction System**
+- Architecture: 50% train / 25% test / 25% deploy split
+- Stock selection: Score all 25 stocks on test period alpha and max 
+  drawdown (threshold: -15%), select top 5
+- Capital allocation: $100,000 with fixed weights (30/15/15/15/15)
+- Selected universe: META, MA, KO, AMZN, UNH
+- Results: Portfolio $102,595 (+2.6%) vs SPY +9.4% over deployment period
+- Notes: Underperforms SPY in bull market deployment period. System is 
+  structurally sound — next improvement is dynamic weighting by alpha score.
+- Planned V3.1: Dynamic capital weighting proportional to test period alpha
