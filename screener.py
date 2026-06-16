@@ -34,5 +34,11 @@ def run_screener():
             })
         except Exception as e:
             print(f"Skipping {ticker}: {e}")
+            result_on_uni.append({
+                "Ticker": ticker,
+                "Strategy Return %": None,
+                "Buy and Hold Return %": None,
+                "Signal": "ERROR"
+            })
 
     return result_on_uni

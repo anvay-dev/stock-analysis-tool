@@ -6,6 +6,7 @@ from backtest import run_backtest
 from mean_reversion import run_reversion
 import pandas as pd
 from screener import run_screener
+from portfolio import create_portfolio
 
 st.title("Stock Analysis Tool")
 ticker = st.text_input("Enter a stock ticker: ")
@@ -49,8 +50,23 @@ if ticker != "":
         screener_results = run_screener()
         screener_df = pd.DataFrame(screener_results)
         screener_df = screener_df.sort_values("Strategy Return %", ascending=False).reset_index(drop=True)
-        screener_df["Strategy Return %"] = screener_df["Strategy Return %"].round(2)
-        screener_df["Buy and Hold Return %"] = screener_df["Buy and Hold Return %"].round(2)
+        screener_df["Strategy Return %"] = pd.to_numeric(screener_df["Strategy Return %"], errors='coerce').round(2)
+        screener_df["Buy and Hold Return %"] = pd.to_numeric(screener_df["Buy and Hold Return %"], errors='coerce').round(2)
         screener_df["Alpha %"] = (screener_df["Strategy Return %"] - screener_df["Buy and Hold Return %"]).round(2)
         screener_df = screener_df.sort_values("Alpha %", ascending=False).reset_index(drop=True)
         st.dataframe(screener_df)
+
+        st.title("V3: Quantitative Portfolio System")
+        st.write("Constructing optimal portfolio from 25-stock universe...")
+        with st.spinner("This may take 1-2 minutes..."):
+            final, spy_compare, selected_stocks = create_portfolio()
+
+        st.write(f"Selected stocks: {selected_stocks}")
+        st.write(f"Portfolio final value: ${final:,.2f}")
+        st.write(f"Portfolio return: {((final - 100000) / 100000 * 100):.2f}%")
+        st.write(f"SPY return (benchmark): {spy_compare:.2f}%")
+        portfolio_return = (final - 100000) / 100000 * 100
+        if portfolio_return > spy_compare:
+            st.success(f"Portfolio beats SPY by {(portfolio_return - spy_compare):.2f}%")
+        else:
+            st.error(f"Portfolio underperforms SPY by {(spy_compare - portfolio_return):.2f}%")
