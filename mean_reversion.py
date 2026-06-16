@@ -1,23 +1,29 @@
 import numpy as np
 import pandas as pd
-def run_reversion(df):
-    df = df.copy()
-    df.columns = df.columns.get_level_values(0)
-    print(df["Daily_Return"].describe())
-    
-    df["middle_band"] = df["Close"].rolling(window=20).mean()
-    stddev = df["Close"].rolling(window=20).std() * 2
-    df["upper_band"] = df["middle_band"] + (stddev)
-    df["lower_band"] = df["middle_band"] - (stddev)
-    df["signal"] = np.where((df["Close"] > df["lower_band"]) & (df["Close"].shift(1) < df["lower_band"].shift(1)), 1, np.where((df["Close"] < df["upper_band"]) & (df["Close"].shift(1) > df["upper_band"].shift(1)), -1, 0))
-    buy_days = df[df["signal"] == 1]["Daily_Return"]
-    print(buy_days.describe())
-    print(buy_days.sum())
 
+def run_reversion(training_data, testing_data = None):
+    training_data = training_data.copy()
+    training_data.columns = training_data.columns.get_level_values(0)
+
+    if testing_data is None:
+        simulate_on = training_data
+    else:
+        testing_data = testing_data.copy()
+        testing_data.columns = testing_data.columns.get_level_values(0)
+        simulate_on = testing_data
+
+    training_data["middle_band"] = training_data["Close"].rolling(window=20).mean()
+    stddev = training_data["Close"].rolling(window=20).std() * 2
+    training_data["upper_band"] = training_data["middle_band"] + (stddev)
+    training_data["lower_band"] = training_data["middle_band"] - (stddev)
+    upper = training_data["upper_band"].iloc[-1]
+    lower = training_data["lower_band"].iloc[-1]
+    simulate_on["signal"] = np.where((simulate_on["Close"] > lower) & (simulate_on["Close"].shift(1) < lower), 1, np.where((simulate_on["Close"] < upper) & (simulate_on["Close"].shift(1) > upper), -1, 0))
+    
     balance = 10000
     portfolio_values = []
 
-    for index, row in df.iterrows():
+    for index, row in simulate_on.iterrows():
         if pd.isna(row["Daily_Return"]):
             portfolio_values.append(balance)
             continue
@@ -26,10 +32,9 @@ def run_reversion(df):
         elif row["signal"] == -1:
             balance = balance * (1 - row["Daily_Return"])
         portfolio_values.append(balance)
-    print(type(df["Close"].iloc[-1]))
-    print(df["Close"].iloc[-1])
-    last_close = df["Close"].iloc[-1]
-    first_close = df["Close"].iloc[0]
+    
+    last_close = simulate_on["Close"].iloc[-1]
+    first_close = simulate_on["Close"].iloc[0]
     buyhold = (last_close - first_close) / first_close * 100
     strategy_return = (balance - 10000) / 10000 * 100
 
@@ -37,5 +42,5 @@ def run_reversion(df):
         'Net Asset Values': portfolio_values, 
         'Final Strategy Return': strategy_return, 
         'Buy and Hold Return': buyhold,
-        'Data': df
+        'Final Balance': balance
     }
